@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile Studio — Personal Profile Manager</title>
+<style>
+:root{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --ink:#17324d;
+  --sub:#60738b;
+  --blue:#2563eb;
+  --sky:#38bdf8;
+  --line:#d9e3ef;
+  --bg:#f4f8fc;
+  --surface:#ffffff;
+  --tint:#eef5ff;
+  --shadow:0 20px 55px rgba(31,64,111,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f7fbff 0%,#f2f7fc 100%);color:var(--ink)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #91bdff;outline-offset:2px}
+.top{background:#fff;border-bottom:1px solid var(--line)}
+.bar{max-width:1220px;margin:auto;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:850;font-size:21px;letter-spacing:-.8px}
+.logo em{font-style:normal;color:var(--blue)}
+.topnote{color:var(--sub);font-size:13px}
+.hero{max-width:1220px;margin:0 auto;padding:38px 22px 26px}
+.kicker{color:#2664b1;text-transform:uppercase;font-weight:800;letter-spacing:1.6px;font-size:11px}
+.hero h1{font-size:clamp(30px,4vw,43px);letter-spacing:-1.4px;margin:9px 0 8px}
+.hero p{color:var(--sub);margin:0;line-height:1.6}
+.layout{max-width:1220px;margin:auto;padding:0 22px 55px;display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:22px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:27px;box-shadow:var(--shadow)}
+.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+h2{font-size:20px;letter-spacing:-.45px;margin:0}
+.caption{font-size:13px;line-height:1.6;color:var(--sub);margin:6px 0 24px}
+.groupHead{font-size:12px;font-weight:850;color:#2159ae;text-transform:uppercase;letter-spacing:1px;margin:26px 0 16px;padding-top:20px;border-top:1px solid #e8eef7}
+.field{margin-bottom:17px}
+label{font-size:13px;font-weight:750;display:block;margin-bottom:8px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+input,textarea,select{background:#fff;border:1px solid #cfdbea;border-radius:12px;width:100%;padding:12px 14px;min-height:48px;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{border-color:#4587ed;box-shadow:0 0 0 4px #eaf3ff;outline:0}
+textarea{min-height:110px;resize:vertical;line-height:1.55}
+.hint{font-size:11px;margin-top:6px;color:var(--sub)}
+.checkrow{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-top:9px;background:#fbfdff}
+.checkrow input{width:17px;height:17px;min-height:0;accent-color:var(--blue)}
+.checkrow label{margin:0;font-weight:650}
+.actions{display:flex;gap:10px;margin-top:23px}
+.btn{border:1px solid #cdd9e9;border-radius:12px;padding:13px 20px;background:#fff;color:#23416e;font-weight:800}
+.btn.primary{background:linear-gradient(135deg,#2563eb,#1795e8);color:#fff;border-color:#2563eb;flex:1}
+.btn:hover{filter:brightness(.98)}
+.status{min-height:22px;margin:12px 0 0;font-size:12px;color:#19775f}.status.err{color:#b33746}
+.previewCard{position:sticky;top:20px;overflow:hidden}
+.smallPill{font-size:11px;color:#22694c;background:#e9f9f0;padding:7px 11px;border-radius:99px;font-weight:750}
+.profileBanner{
+  height:166px;border-radius:18px;position:relative;margin-top:18px;overflow:hidden;
+  background:linear-gradient(120deg,#0f6f85,#19a9be 52%,#7ee2d3);
+}
+.profileBanner::before,
+.profileBanner::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.profileBanner::before{
+  width:240px;height:240px;right:-80px;top:-110px;
+  background:radial-gradient(circle at center,rgba(255,255,255,.34) 0%,rgba(255,255,255,.06) 55%,transparent 56%);
+  box-shadow:-90px 70px 0 -20px rgba(255,255,255,.12),-180px 120px 0 -40px rgba(255,255,255,.1);
+}
+.profileBanner::after{
+  inset:0;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.16),transparent 48%),
+    radial-gradient(circle at 18% 30%,rgba(255,255,255,.25) 0 10px,transparent 11px),
+    radial-gradient(circle at 28% 60%,rgba(255,255,255,.16) 0 6px,transparent 7px),
+    radial-gradient(circle at 74% 32%,rgba(255,255,255,.22) 0 8px,transparent 9px),
+    linear-gradient(90deg,transparent 0 15%,rgba(255,255,255,.09) 15% 16%,transparent 16% 32%,rgba(255,255,255,.07) 32% 33%,transparent 33%);
+  opacity:.9;
+}
+.profileBanner[data-accent="blue"]{background:linear-gradient(120deg,#174b9f,#488cf4 55%,#81c5ff)}
+.profileBanner[data-accent="purple"]{background:linear-gradient(120deg,#5130a4,#9671ec,#c3b0f6)}
+.profileBanner[data-accent="teal"]{background:linear-gradient(120deg,#086b77,#16a1a1,#79ddcc)}
+.avatar{width:84px;height:84px;border-radius:24px;border:5px solid #fff;display:grid;place-items:center;color:#fff;font-size:28px;font-weight:850;background:#173e87;position:absolute;bottom:-41px;left:26px;box-shadow:0 12px 28px rgba(24,59,114,.18);z-index:1}
+.profileIdentity{margin-top:56px;margin-bottom:20px}
+.profileIdentity h3{font-size:26px;letter-spacing:-.7px;margin:0 0 6px;overflow-wrap:anywhere}
+.role{font-size:13px;font-weight:700;color:#2b64aa;margin:0}
+.bio{font-size:14px;color:#4b5d73;line-height:1.7;margin:16px 0 22px;white-space:pre-wrap;overflow-wrap:anywhere}
+.facts{border-top:1px solid var(--line);display:grid;gap:14px;padding-top:19px}
+.fact{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;font-size:13px}
+.fact span{color:var(--sub)}
+.fact strong{font-weight:700;overflow-wrap:anywhere}
+.portfolioLink{color:#2563eb;text-decoration:none}
+.portfolioLink:hover{text-decoration:underline}
+.prefBadges{display:flex;gap:8px;flex-wrap:wrap;margin-top:23px}
+.prefBadges span{background:var(--tint);border:1px solid #dfebff;color:#37609c;padding:7px 10px;border-radius:8px;font-size:11px;font-weight:750}
+.note{color:var(--sub);font-size:12px;line-height:1.6;margin-top:20px}
+footer{text-align:center;font-size:12px;color:#8797ad;padding:0 10px 25px}
+body.dark{--ink:#edf4ff;--sub:#adbbce;--line:#37475e;--bg:#111d2d;--surface:#1b2a3f;--tint:#253956;--shadow:0 20px 55px #0002;background:#111d2d}
+body.dark .top,body.dark input,body.dark textarea,body.dark select,body.dark .btn:not(.primary),body.dark .checkrow{background:#1b2a3f;color:var(--ink)}
+body.dark .profileIdentity h3{color:var(--ink)}
+body.dark .bio{color:#c4d2e3}
+body.dark .prefBadges span{border-color:#3a5275;color:#bdceeb}
+body.dark .avatar{border-color:#1b2a3f}
+body.dark .portfolioLink{color:#8ec5ff}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.previewCard{position:static}}
+@media(max-width:480px){.layout{padding:0 14px 35px}.hero{padding:30px 15px 23px}.card{padding:21px}.cols{grid-template-columns:1fr;gap:0}.topnote{display:none}.fact{grid-template-columns:94px 1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <div class="logo">Profile<em>Studio</em></div>
+    <div class="topnote">Personal profile dashboard</div>
+  </div>
+</header>
+<section class="hero">
+  <div class="kicker">Your digital identity</div>
+  <h1>Make your profile yours.</h1>
+  <p>Manage your personal details and appearance in one beautifully simple place.</p>
+</section>
+<main class="layout">
+  <section class="card">
+    <div class="panelHead"><h2>Personal Information</h2></div>
+    <p class="caption">Your information is already filled in. Edit it anytime, then choose Generate Profile to apply your changes.</p>
+
+    <form id="profileForm" novalidate>
+      <div class="field">
+        <label for="fullName">Full name *</label>
+        <input id="fullName" name="fullName" required maxlength="100" autocomplete="name" value="Jiya Panchal">
+      </div>
+
+      <div class="cols">
+        <div class="field">
+          <label for="role">Role *</label>
+          <input id="role" name="role" required maxlength="80" value="Web Developer">
+        </div>
+        <div class="field">
+          <label for="email">Email address *</label>
+          <input id="email" name="email" type="email" required autocomplete="email" maxlength="150" value="jiyapanchal120706@gmail.com">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="bio">Bio *</label>
+        <textarea id="bio" name="bio" required maxlength="350">Hello! I'm Jiya Panchal, working as a web Developer.</textarea>
+        <div class="hint">Up to 350 characters</div>
+      </div>
+
+      <div class="field">
+        <label for="location">Location *</label>
+        <input id="location" name="location" required maxlength="120" value="Surat">
+      </div>
+
+      <div class="groupHead">Appearance &amp; Preferences</div>
+
+      <div class="cols">
+        <div class="field">
+          <label for="theme">Theme</label>
+          <select id="theme">
+            <option value="light" selected>Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="language">Language</label>
+          <select id="language">
+            <option value="English" selected>English</option>
+            <option value="Gujarati">Gujarati</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cols">
+        <div class="field">
+          <label for="accent">Profile accent color</label>
+          <select id="accent">
+            <option value="blue" selected>Ocean Blue</option>
+            <option value="purple">Soft Purple</option>
+            <option value="teal">Fresh Teal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="portfolio">Portfolio / Website</label>
+          <input id="portfolio" name="portfolio" type="url" maxlength="220" placeholder="https://yourportfolio.com" value="https://portfolio.jiya.dev">
+        </div>
+      </div>
+
+      <div class="checkrow"><input id="notifications" type="checkbox" checked><label for="notifications">Enable notifications</label></div>
+      <div class="checkrow"><input id="publicProfile" type="checkbox" checked><label for="publicProfile">Public profile visibility</label></div>
+
+      <div class="actions">
+        <button class="btn primary" type="submit">Generate Profile</button>
+        <button class="btn" id="resetBtn" type="button">Reset</button>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <aside class="card previewCard">
+    <div class="panelHead"><h2>Profile Preview</h2><span class="smallPill" id="previewState">Ready</span></div>
+    <p class="caption">Your profile is visible from the moment you open the page.</p>
+
+    <div class="profileBanner" id="banner" data-accent="blue">
+      <div class="avatar" id="avatar">JP</div>
+    </div>
+
+    <div class="profileIdentity">
+      <h3 id="viewName">Jiya Panchal</h3>
+      <p class="role" id="viewRole">Web Developer</p>
+    </div>
+
+    <p class="bio" id="viewBio">Hello! I'm Jiya Panchal, working as a web Developer.</p>
+
+    <div class="facts">
+      <div class="fact"><span>Email</span><strong id="viewEmail">jiyapanchal120706@gmail.com</strong></div>
+      <div class="fact"><span>Location</span><strong id="viewLocation">Surat</strong></div>
+      <div class="fact"><span>Portfolio</span><strong><a id="viewPortfolio" class="portfolioLink" href="https://portfolio.jiya.dev" target="_blank" rel="noopener noreferrer">https://portfolio.jiya.dev</a></strong></div>
+      <div class="fact"><span>Theme</span><strong id="viewTheme">Light</strong></div>
+      <div class="fact"><span>Language</span><strong id="viewLanguage">English</strong></div>
+    </div>
+
+    <div class="prefBadges">
+      <span id="viewVisibility">Public profile</span>
+      <span id="viewNotifications">Notifications on</span>
+      <span id="viewAccent">Ocean Blue</span>
+    </div>
+
+    <p class="note">Changes appear here only after you click Generate Profile. Reset restores your original details.</p>
+  </aside>
+</main>
+<footer>ProfileStudio · Personal Profile Manager</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const form = $('profileForm');
+const original = {
+  fullName: 'Jiya Panchal',
+  role: 'Web Developer',
+  email: 'jiyapanchal120706@gmail.com',
+  bio: "Hello! I'm Jiya Panchal, working as a web Developer.",
+  location: 'Surat',
+  theme: 'light',
+  language: 'English',
+  accent: 'blue',
+  portfolio: 'https://portfolio.jiya.dev',
+  notifications: true,
+  publicProfile: true
+};
+
+function readForm() {
+  return {
+    fullName: $('fullName').value.trim(),
+    role: $('role').value.trim(),
+    email: $('email').value.trim(),
+    bio: $('bio').value.trim(),
+    location: $('location').value.trim(),
+    theme: $('theme').value,
+    language: $('language').value,
+    accent: $('accent').value,
+    portfolio: $('portfolio').value.trim(),
+    notifications: $('notifications').checked,
+    publicProfile: $('publicProfile').checked
+  };
+}
+
+function setFormValues(profile) {
+  $('fullName').value = profile.fullName;
+  $('role').value = profile.role;
+  $('email').value = profile.email;
+  $('bio').value = profile.bio;
+  $('location').value = profile.location;
+  $('theme').value = profile.theme;
+  $('language').value = profile.language;
+  $('accent').value = profile.accent;
+  $('portfolio').value = profile.portfolio;
+  $('notifications').checked = profile.notifications;
+  $('publicProfile').checked = profile.publicProfile;
+}
+
+function render(profile) {
+  const { fullName: name, role, email, bio, location, theme, language, accent, portfolio, notifications, publicProfile } = profile;
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0].toUpperCase()).join('');
+
+  $('avatar').textContent = initials || 'P';
+  $('viewName').textContent = name || 'Your Name';
+  $('viewRole').textContent = role || 'Your Role';
+  $('viewEmail').textContent = email || 'your@email.com';
+  $('viewBio').textContent = bio || 'Your bio will appear here.';
+  $('viewLocation').textContent = location || 'Not set';
+  $('viewTheme').textContent = theme === 'dark' ? 'Dark' : 'Light';
+  $('viewLanguage').textContent = language || 'English';
+  $('banner').dataset.accent = accent || 'blue';
+  $('viewAccent').textContent = ({ blue: 'Ocean Blue', purple: 'Soft Purple', teal: 'Fresh Teal' })[accent] || 'Ocean Blue';
+  $('viewVisibility').textContent = publicProfile ? 'Public profile' : 'Private profile';
+  $('viewNotifications').textContent = notifications ? 'Notifications on' : 'Notifications off';
+
+  const portfolioLink = $('viewPortfolio');
+  if (portfolio) {
+    portfolioLink.textContent = portfolio;
+    portfolioLink.href = portfolio;
+    portfolioLink.style.pointerEvents = 'auto';
+  } else {
+    portfolioLink.textContent = 'Not added';
+    portfolioLink.removeAttribute('href');
+    portfolioLink.style.pointerEvents = 'none';
+  }
+
+  document.body.classList.toggle('dark', theme === 'dark');
+  $('previewState').textContent = 'Up to date';
+}
+
+function showStatus(text, error = false) {
+  $('status').textContent = text;
+  $('status').classList.toggle('err', error);
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const data = readForm();
+
+  for (const key of ['fullName', 'role', 'email', 'bio', 'location']) {
+    if (!data[key]) {
+      showStatus('Please complete all required fields.', true);
+      $(key).focus();
+      return;
+    }
+  }
+
+  if (!$('email').validity.valid) {
+    showStatus('Please enter a valid email address.', true);
+    $('email').focus();
+    return;
+  }
+
+  if (data.portfolio && !$('portfolio').validity.valid) {
+    showStatus('Please enter a valid portfolio URL.', true);
+    $('portfolio').focus();
+    return;
+  }
+
+  render(data);
+  showStatus('Profile generated successfully.');
+});
+
+function markPending() {
+  showStatus('Changes pending. Click Generate Profile to update the preview.');
+  $('previewState').textContent = 'Not updated';
+}
+
+form.addEventListener('input', markPending);
+form.addEventListener('change', markPending);
+
+$('resetBtn').addEventListener('click', () => {
+  form.reset();
+  setFormValues(original);
+  render(original);
+  showStatus('Original details restored.');
+});
+
+setFormValues(original);
+render(original);
+</script>
+</body>
+</html>
